@@ -37,5 +37,35 @@ curl -X POST --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x941
 geth console
 admin.nodeInfo  ###########use this for the next step
 
-#######on second miner do the above but then do this, notice the IP address shoved in
-geth  — mine  — nodiscover  — maxpeers 1  — networkid 13  — rpc  — rpccorsdomain "*"  — bootnodes  a1688d7ea3dc33fdcee974b6cda0208aec3ac912427f4147c6361d850d3e13430cd1322faa8fbc071384704cbfaf7831aba9d15885332ef74f71cb91e9394271@[10.1.100.120]:30303
+#######on second miner do the above but then do this, notice the IP address shoved in a few steps below
+geth console
+personal.newAccount()
+exit
+
+geth  --mine  --nodiscover  --maxpeers 1  --networkid 13  --rpc  --rpccorsdomain "*"  --bootnodes  enode://a1688d7ea3dc33fdcee974b6cda0208aec3ac912427f4147c6361d850d3e13430cd1322faa8fbc071384704cbfaf7831aba9d15885332ef74f71cb91e9394271@[10.1.100.120]:30303
+#####the above doesn't connect them??
+
+#check peers with
+curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":74}' http://localhost:8545
+
+
+DO NEXT https://github.com/ethereum/go-ethereum/wiki/Connecting-to-the-network
+
+Static nodes
+
+Geth also supports a feature called static nodes if you have certain peers you always want to connect to. Static nodes are re-connected on disconnects. You can configure permanent static nodes by putting something like the following into <datadir>/static-nodes.json:
+
+[
+  "enode://f4642fa65af50cfdea8fa7414a5def7bb7991478b768e296f5e4a54e8b995de102e0ceae2e826f293c481b5325f89be6d207b003382e18a8ecba66fbaf6416c0@33.4.2.1:30303",
+  "enode://pubkey@ip:port"
+]
+
+You can also add static nodes at runtime via the js console using admin.addPeer():
+
+admin.addPeer("enode://f4642fa65af50cfdea8fa7414a5def7bb7991478b768e296f5e4a54e8b995de102e0ceae2e826f293c481b5325f89be6d207b003382e18a8ecba66fbaf6416c0@33.4.2.1:30303")
+
+Caveat: Currently the console is lacking support for removing a peer, increasing peercount or adding a non-static peer but not to keep try reconnecting.
+
+golang <3
+
+
