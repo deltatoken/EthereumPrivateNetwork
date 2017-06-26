@@ -1,7 +1,10 @@
+#For the first server do:
 sudo apt-get install software-properties-common
 sudo add-apt-repository -y ppa:ethereum/ethereum
 sudo apt-get update
-sudo apt-get install ethereum#put this into ~/geth/genesis.json:
+sudo apt-get install ethereum
+mkdir ~/geth
+#put this into ~/geth/genesis.json:
 
 {
     "config": {
@@ -23,3 +26,16 @@ geth init ~/geth/genesis.json
 
 #start it up:
 geth --mine  --nodiscover  --maxpeers 0  --networkid 13  --rpc  --rpccorsdomain "*"
+
+#check status:
+curl -X POST --data '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' http://localhost:8545
+
+#check balance:
+curl -X POST --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x941f1f0b08757457be0b52d83a1e3e566473ed61", "latest"],"id":1}' http://localhost:8545
+
+#get enode (probably need to stop the eth process)
+geth console
+admin.nodeInfo  ###########use this for the next step
+
+#######on second miner do the above but then do this, notice the IP address shoved in
+geth  — mine  — nodiscover  — maxpeers 1  — networkid 13  — rpc  — rpccorsdomain "*"  — bootnodes  a1688d7ea3dc33fdcee974b6cda0208aec3ac912427f4147c6361d850d3e13430cd1322faa8fbc071384704cbfaf7831aba9d15885332ef74f71cb91e9394271@[10.1.100.120]:30303
