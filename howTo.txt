@@ -1,14 +1,10 @@
 #For the first server do:
-sudo apt-get install software-properties-common
-sudo add-apt-repository -y ppa:ethereum/ethereum
-sudo apt-get update
-sudo apt-get install ethereum
-mkdir ~/geth
-#put this into ~/geth/genesis.json:
+mkdir ~/geth && cd ~/geth && sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ethereum/ethereum && sudo apt-get  update && sudo apt-get install -y ethereum && geth account new
 
+cat > ~/geth/genesis.json <<EOL
 {
     "config": {
-        "chainId": 13,
+        "chainId": 15123,
         "homesteadBlock": 0,
         "eip155Block": 0,
         "eip158Block": 0
@@ -16,16 +12,24 @@ mkdir ~/geth
     "difficulty": "200000000",
     "gasLimit": "2100000",
     "alloc": {
-        "941f1f0b08757457be0b52d83a1e3e566473ed61": { "balance": "100000000" }
+        "7df9a875a174b3bc565e6424a0050ebc1b2d1d82": { "balance": "300000" },
+        "f41c74c9ae680c1aa78f42e5647a62f353b7bdde": { "balance": "400000" }
     }
 }
+EOL
 
 #####
 geth --datadir ~/geth account new
 geth init ~/geth/genesis.json 
 
+cd ~/geth/
+bootnode --genkey=boot.key
+bootnode --nodekey=boot.key
+###The displayed enode address will be used later
+
+
 #start it up:
-geth --mine  --nodiscover  --maxpeers 0  --networkid 13  --rpc  --rpccorsdomain "*"
+geth --mine  --nodiscover  --maxpeers 0  --networkid 15123  --rpc  --rpccorsdomain "*"
 
 #check status:
 curl -X POST --data '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}' http://localhost:8545
@@ -42,8 +46,10 @@ geth console
 personal.newAccount()
 exit
 
-geth  --mine  --nodiscover  --maxpeers 1  --networkid 13  --rpc  --rpccorsdomain "*"  --bootnodes  enode://a1688d7ea3dc33fdcee974b6cda0208aec3ac912427f4147c6361d850d3e13430cd1322faa8fbc071384704cbfaf7831aba9d15885332ef74f71cb91e9394271@[10.1.100.120]:30303
+geth  --mine  --nodiscover  --maxpeers 1  --networkid 15123  --rpc  --rpccorsdomain "*"  --bootnodes  enode://a1688d7ea3dc33fdcee974b6cda0208aec3ac912427f4147c6361d850d3e13430cd1322faa8fbc071384704cbfaf7831aba9d15885332ef74f71cb91e9394271@10.1.100.120:30303, enode
 #####the above doesn't connect them??
+##example from Internet:
+##geth --bootnodes enode://pubkey1@ip1:port1,enode://pubkey2@ip2:port2,enode://pubkey3@ip3:port3
 
 #check peers with
 curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":74}' http://localhost:8545
