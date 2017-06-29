@@ -1,5 +1,16 @@
+###disable IP6
+sudo su
+cat >> /etc/sysctl.conf <<EOL
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+EOL
+
+sudo sysctl -p
+
+###Note:  In CustomGenesis.json the value in "alloc" should be your address
 #For the first server do:
-sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ethereum/ethereum && sudo apt-get  update && sudo apt-get install -y ethereum 
+sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ethereum/ethereum && sudo apt-get  update && sudo apt-get install -y ethereum
 
 #Do this NOT AS ROOT!!!!
 mkdir ~/geth && cd ~/geth
@@ -22,25 +33,19 @@ cat > ~/geth/genesis.json <<EOL
 }
 EOL
 
+
 geth account new
 
-geth \
- --mine \
- --nodiscover \
- --maxpeers 0 \
- --networkid 13 \
- --rpc \
- --rpccorsdomain "*"
- 
- geth \
- — mine \
- — nodiscover \
- — maxpeers 1 \
- — networkid 13 \
- — rpc \
- — rpccorsdomain "*"
+ifconfig #get IP address for later
 
+##maybe need to "init" from below here?
 
+geth  --mine  --nodiscover  --maxpeers 5 --networkid 13  --rpc  --rpccorsdomain "*" console
+admin.nodeInfo.enode #use this and the IP (of both servers) in the below command
+
+admin.addPeer("enode://1cab4817b674212b0373469b44beff1415daf5247be14e47547ea9dac4f595be9e1065020072cf2a2ebb7f41977722e1c4442458a13f6c69d686d44be3bb8344@10.1.100.188:30303")
+admin.addPeer("enode://b244f15046ecd66a5e5cf668ef986c0fc5f438637e3490156d43e3259fbe756540445113e1e2472c5b6e1e7a598db8c91feee4f0a284e8b9255493a1406cd164@10.1.100.191:30303")
+net.peerCount #This should shoud be "1" now.
 
 #####
 geth --datadir ~/geth account new
