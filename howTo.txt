@@ -1,10 +1,15 @@
 #For the first server do:
-mkdir ~/geth && cd ~/geth && sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ethereum/ethereum && sudo apt-get  update && sudo apt-get install -y ethereum && geth account new
+sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ethereum/ethereum && sudo apt-get  update && sudo apt-get install -y ethereum 
+
+#Do this NOT AS ROOT!!!!
+mkdir ~/geth && cd ~/geth
+
+geth account new
 
 cat > ~/geth/genesis.json <<EOL
 {
     "config": {
-        "chainId": 15123,
+        "chainId": 13,
         "homesteadBlock": 0,
         "eip155Block": 0,
         "eip158Block": 0
@@ -12,11 +17,30 @@ cat > ~/geth/genesis.json <<EOL
     "difficulty": "200000000",
     "gasLimit": "2100000",
     "alloc": {
-        "7df9a875a174b3bc565e6424a0050ebc1b2d1d82": { "balance": "300000" },
-        "f41c74c9ae680c1aa78f42e5647a62f353b7bdde": { "balance": "400000" }
+        "941f1f0b08757457be0b52d83a1e3e566473ed61": { "balance": "100000000" }
     }
 }
 EOL
+
+geth account new
+
+geth \
+ --mine \
+ --nodiscover \
+ --maxpeers 0 \
+ --networkid 13 \
+ --rpc \
+ --rpccorsdomain "*"
+ 
+ geth \
+ — mine \
+ — nodiscover \
+ — maxpeers 1 \
+ — networkid 13 \
+ — rpc \
+ — rpccorsdomain "*"
+
+
 
 #####
 geth --datadir ~/geth account new
